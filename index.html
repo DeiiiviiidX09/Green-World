@@ -1,0 +1,651 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#102719">
+<title>Green World</title>
+
+<style>
+:root {
+  --green: #36c978;
+  --dark: #102719;
+  --card: #1b3828;
+  --light: #eaffef;
+  --gold: #f6ce65;
+  --muted: #a8c4af;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--dark);
+  color: var(--light);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+header {
+  padding: 22px 18px;
+  background: #173523;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.logo {
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.logo span {
+  color: var(--green);
+}
+
+.balance {
+  background: #28563a;
+  border: 1px solid #4e9868;
+  border-radius: 20px;
+  padding: 10px 13px;
+  font-weight: 700;
+  color: #8fffb0;
+}
+
+main {
+  max-width: 650px;
+  margin: auto;
+  padding: 18px 16px 100px;
+}
+
+h1 {
+  font-size: 27px;
+  margin: 12px 0 5px;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 22px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat {
+  background: var(--card);
+  border-radius: 17px;
+  padding: 17px;
+}
+
+.stat small {
+  color: var(--muted);
+}
+
+.stat strong {
+  display: block;
+  font-size: 23px;
+  margin-top: 7px;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 26px 0 15px;
+}
+
+.section-title h2 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.plant {
+  background: var(--card);
+  border: 1px solid #315d40;
+  border-radius: 20px;
+  padding: 17px;
+  margin-bottom: 15px;
+}
+
+.plant-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.plant-name {
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.status {
+  color: #8fffb0;
+  font-size: 12px;
+  background: #28563a;
+  padding: 7px 10px;
+  border-radius: 20px;
+}
+
+.tree {
+  text-align: center;
+  font-size: 92px;
+  padding: 16px 0 8px;
+  min-height: 130px;
+}
+
+.progress {
+  height: 9px;
+  background: #0b1c11;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--green);
+  transition: width .3s;
+}
+
+.plant-info {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.health {
+  margin: 13px 0;
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 9px;
+  margin-top: 15px;
+}
+
+button {
+  border: 0;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--green);
+  color: #092113;
+  flex: 1;
+}
+
+.secondary {
+  background: #31533c;
+  color: white;
+  flex: 1;
+}
+
+.danger {
+  background: #693c3c;
+  color: white;
+}
+
+.shop-item {
+  background: var(--card);
+  border: 1px solid #315d40;
+  padding: 17px;
+  border-radius: 17px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.shop-emoji {
+  font-size: 42px;
+}
+
+.shop-description {
+  flex: 1;
+}
+
+.shop-description small {
+  display: block;
+  color: var(--muted);
+  margin-top: 5px;
+}
+
+.shop-item button {
+  background: var(--green);
+  color: #092113;
+}
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  background: #173523;
+  border-top: 1px solid #315d40;
+  padding: 10px 4px calc(10px + env(safe-area-inset-bottom));
+  z-index: 10;
+}
+
+.nav button {
+  background: transparent;
+  color: var(--muted);
+  padding: 8px 12px;
+}
+
+.nav button.active {
+  color: var(--green);
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  background: var(--card);
+  border-radius: 17px;
+  padding: 30px 15px;
+}
+
+.notice {
+  background: #28563a;
+  color: #baffcd;
+  border-radius: 13px;
+  padding: 13px;
+  font-size: 13px;
+  margin-top: 18px;
+  line-height: 1.5;
+}
+
+@media (max-width: 380px) {
+  .logo { font-size: 19px; }
+  .balance { font-size: 12px; }
+  .tree { font-size: 76px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">🌱 Green <span>World</span></div>
+  <div class="balance" id="balance">100.00 USDT</div>
+</header>
+
+<main>
+
+<section class="page active" id="garden">
+  <h1>Mi jardín 🌳</h1>
+  <div class="subtitle">Cuida tus plantas y observa cómo crecen.</div>
+
+  <div class="stats">
+    <div class="stat">
+      <small>Nivel de jardinero</small>
+      <strong id="level">1</strong>
+    </div>
+    <div class="stat">
+      <small>Plantas activas</small>
+      <strong id="plantCount">0 / 3</strong>
+    </div>
+    <div class="stat">
+      <small>Experiencia</small>
+      <strong id="xp">0 XP</strong>
+    </div>
+    <div class="stat">
+      <small>Árboles vendidos</small>
+      <strong id="sold">0</strong>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <h2>Mis plantas</h2>
+  </div>
+
+  <div id="plantList"></div>
+
+  <div class="notice">
+    💧 Recuerda regar tus plantas diariamente. Si descuidas su cuidado,
+    su salud disminuirá y podrían marchitarse.
+  </div>
+</section>
+
+<section class="page" id="shop">
+  <h1>Semillería 🌻</h1>
+  <div class="subtitle">Elige qué quieres cultivar.</div>
+
+  <div id="shopList"></div>
+
+  <div class="notice">
+    Las compras de esta tienda son simuladas y utilizan saldo ficticio.
+  </div>
+</section>
+
+<section class="page" id="market">
+  <h1>Mercado 🌳</h1>
+  <div class="subtitle">Vende los árboles que hayan terminado de crecer.</div>
+  <div id="marketList"></div>
+</section>
+
+<section class="page" id="profile">
+  <h1>Mi perfil 👨‍🌾</h1>
+
+  <div class="stat">
+    <small>Saldo disponible</small>
+    <strong id="profileBalance">100.00 USDT</strong>
+  </div>
+
+  <div class="stat" style="margin-top:12px">
+    <small>Nivel actual</small>
+    <strong id="profileLevel">1</strong>
+  </div>
+
+  <div class="stat" style="margin-top:12px">
+    <small>Experiencia acumulada</small>
+    <strong id="profileXP">0 XP</strong>
+  </div>
+
+  <div class="notice">
+    Green World es actualmente un prototipo. No representa una cuenta
+    financiera ni permite depositar o retirar criptomonedas reales.
+  </div>
+
+  <button class="danger" style="margin-top:20px;width:100%"
+    onclick="resetGame()">Reiniciar demostración</button>
+</section>
+
+</main>
+
+<nav class="nav">
+  <button class="active" onclick="showPage('garden',this)">🌳<br>Jardín</button>
+  <button onclick="showPage('shop',this)">🌱<br>Tienda</button>
+  <button onclick="showPage('market',this)">🛒<br>Mercado</button>
+  <button onclick="showPage('profile',this)">👤<br>Perfil</button>
+</nav>
+
+<script>
+const species = [
+  {
+    id: "apple",
+    name: "Manzano",
+    emoji: "🌳",
+    seed: 10,
+    value: 17.5,
+    days: 3,
+    description: "Un árbol frutal para comenzar tu jardín."
+  },
+  {
+    id: "lemon",
+    name: "Limonero",
+    emoji: "🍋",
+    seed: 20,
+    value: 35,
+    days: 5,
+    description: "Un árbol cítrico que requiere más paciencia."
+  },
+  {
+    id: "golden",
+    name: "Árbol dorado",
+    emoji: "🌟",
+    seed: 40,
+    value: 70,
+    days: 7,
+    description: "Una especie especial para jardineros avanzados."
+  }
+];
+
+const DAY = 24 * 60 * 60 * 1000;
+
+let state = JSON.parse(localStorage.getItem("greenWorldSave")) || {
+  balance: 100,
+  xp: 0,
+  sold: 0,
+  plants: [],
+  lastDate: new Date().toDateString()
+};
+
+function save() {
+  localStorage.setItem("greenWorldSave", JSON.stringify(state));
+}
+
+function level() {
+  return Math.floor(state.xp / 100) + 1;
+}
+
+function updateDay() {
+  const today = new Date().toDateString();
+
+  if (state.lastDate !== today) {
+    state.plants.forEach(p => {
+      if (!p.dead && !p.watered) {
+        p.health = Math.max(0, p.health - 25);
+      }
+      p.watered = false;
+    });
+
+    state.lastDate = today;
+    save();
+  }
+}
+
+function growth(p) {
+  return Math.min(100, Math.floor(
+    (Date.now() - p.plantedAt) /
+    (species.find(s => s.id === p.species).days * DAY) * 100
+  ));
+}
+
+function buySeed(id) {
+  const s = species.find(x => x.id === id);
+
+  if (state.plants.filter(p => !p.dead).length >= 3) {
+    alert("¡Tu jardín está lleno! Solo puedes tener 3 plantas.");
+    return;
+  }
+
+  if (level() < (id === "golden" ? 3 : id === "lemon" ? 2 : 1)) {
+    alert("Necesitas subir de nivel para desbloquear esta semilla.");
+    return;
+  }
+
+  if (state.balance < s.seed) {
+    alert("No tienes suficiente saldo.");
+    return;
+  }
+
+  state.balance -= s.seed;
+
+  state.plants.push({
+    id: Date.now() + Math.random(),
+    species: id,
+    plantedAt: Date.now(),
+    health: 100,
+    watered: false,
+    dead: false
+  });
+
+  save();
+  render();
+  alert("¡Semilla plantada con éxito!");
+}
+
+function waterPlant(id) {
+  const p = state.plants.find(x => x.id === id);
+
+  if (p.watered) {
+    alert("Ya regaste esta planta hoy. ¡Vuelve mañana!");
+    return;
+  }
+
+  p.watered = true;
+  p.health = Math.min(100, p.health + 20);
+  state.xp += 10;
+
+  save();
+  render();
+}
+
+function sellPlant(id) {
+  const p = state.plants.find(x => x.id === id);
+  const s = species.find(x => x.id === p.species);
+
+  if (growth(p) < 100) {
+    alert("Tu árbol todavía está creciendo.");
+    return;
+  }
+
+  if (p.health <= 0) {
+    alert("Esta planta está marchita y no se puede vender.");
+    return;
+  }
+
+  state.balance += s.value;
+  state.xp += 25;
+  state.sold++;
+
+  state.plants = state.plants.filter(x => x.id !== id);
+
+  save();
+  render();
+  alert("¡Árbol vendido por " + s.value.toFixed(2) + " USDT ficticios!");
+}
+
+function render() {
+  updateDay();
+
+  document.getElementById("balance").textContent =
+    state.balance.toFixed(2) + " USDT";
+
+  document.getElementById("profileBalance").textContent =
+    state.balance.toFixed(2) + " USDT";
+
+  document.getElementById("level").textContent = level();
+  document.getElementById("profileLevel").textContent = level();
+
+  document.getElementById("xp").textContent = state.xp + " XP";
+  document.getElementById("profileXP").textContent = state.xp + " XP";
+
+  document.getElementById("sold").textContent = state.sold;
+
+  const active = state.plants.filter(p => !p.dead);
+  document.getElementById("plantCount").textContent =
+    active.length + " / 3";
+
+  const list = document.getElementById("plantList");
+
+  if (active.length === 0) {
+    list.innerHTML = '<div class="empty">🌱<br><br>Tu jardín está vacío.<br>Visita la tienda para comprar tu primera semilla.</div>';
+  } else {
+    list.innerHTML = active.map(p => {
+      const s = species.find(x => x.id === p.species);
+      const g = growth(p);
+      const emoji = g < 35 ? "🌱" : g < 70 ? "🌿" : s.emoji;
+
+      return `
+      <div class="plant">
+        <div class="plant-top">
+          <div class="plant-name">${s.name}</div>
+          <div class="status">${p.health > 0 ? "Saludable" : "Marchita"}</div>
+        </div>
+        <div class="tree">${emoji}</div>
+        <div class="plant-info">
+          <span>Crecimiento</span>
+          <span>${g}%</span>
+        </div>
+        <div class="progress">
+          <div class="progress-fill" style="width:${g}%"></div>
+        </div>
+        <div class="health">❤️ Salud: ${p.health}%</div>
+        <div class="health">💧 Riego: ${p.watered ? "Completado hoy" : "Pendiente"}</div>
+        <div class="actions">
+          <button class="primary" onclick="waterPlant(${p.id})"
+            ${p.watered || p.health <= 0 ? "disabled" : ""}>
+            💧 Regar
+          </button>
+          <button class="secondary" onclick="sellPlant(${p.id})">
+            🛒 Vender
+          </button>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  document.getElementById("shopList").innerHTML = species.map(s => {
+    const required = s.id === "golden" ? 3 : s.id === "lemon" ? 2 : 1;
+    return `
+    <div class="shop-item">
+      <div class="shop-emoji">${s.emoji}</div>
+      <div class="shop-description">
+        <strong>${s.name}</strong>
+        <small>${s.description}</small>
+        <small>Crece en ${s.days} días · Venta: ${s.value} USDT</small>
+      </div>
+      <button onclick="buySeed('${s.id}')">
+        ${s.seed} USDT
+      </button>
+    </div>`;
+  }).join("");
+
+  const mature = active.filter(p => growth(p) >= 100 && p.health > 0);
+
+  document.getElementById("marketList").innerHTML =
+    mature.length === 0
+    ? '<div class="empty">🌳<br><br>Todavía no tienes árboles maduros.<br>¡Sigue cuidando tu jardín!</div>'
+    : mature.map(p => {
+      const s = species.find(x => x.id === p.species);
+      return `<div class="shop-item">
+        <div class="shop-emoji">${s.emoji}</div>
+        <div class="shop-description">
+          <strong>${s.name}</strong>
+          <small>Listo para vender</small>
+          <small>Precio: ${s.value} USDT ficticios</small>
+        </div>
+        <button onclick="sellPlant(${p.id})">Vender</button>
+      </div>`;
+    }).join("");
+}
+
+function showPage(id, button) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
+  button.classList.add("active");
+
+  render();
+}
+
+function resetGame() {
+  if (confirm("¿Seguro que quieres borrar tu progreso de demostración?")) {
+    localStorage.removeItem("greenWorldSave");
+    location.reload();
+  }
+}
+
+render();
+setInterval(render, 60000);
+</script>
+
+</body>
+</html>
