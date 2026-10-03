@@ -396,11 +396,6 @@ button {
   </p>
 </div>
 
-  <div class="stat" style="margin-top:12px">
-    <small>Experiencia acumulada</small>
-    <strong id="profileXP">0 XP</strong>
-  </div>
-
   <div class="notice">
     Green World es actualmente un prototipo. No representa una cuenta
     financiera ni permite depositar o retirar criptomonedas reales.
@@ -437,7 +432,6 @@ const DAY = 24 * 60 * 60 * 1000;
 
 let state = JSON.parse(localStorage.getItem("greenWorldSave")) || {
   balance: 100,
-  xp: 0,
   sold: 0,
   plants: [],
   lastDate: new Date().toDateString(),
@@ -453,10 +447,6 @@ let state = JSON.parse(localStorage.getItem("greenWorldSave")) || {
 
 function save() {
   localStorage.setItem("greenWorldSave", JSON.stringify(state));
-}
-
-function level() {
-  return Math.floor(state.xp / 100) + 1;
 }
 
 function updateDay() {
@@ -512,11 +502,6 @@ function buySeed(id) {
     return;
   }
 
-  if (level() < 1) {
-    alert("Necesitas subir de nivel para comprar esta semilla.");
-    return;
-  }
-
   if (state.balance < s.seed) {
     alert("No tienes suficiente saldo.");
     return;
@@ -563,8 +548,6 @@ function waterPlant(id) {
     p.mature = true;
   }
 
-  state.xp += 10;
-
   save();
   render();
 }
@@ -595,7 +578,6 @@ function sellPlant(id) {
   const salePrice = s.value * (percentage / 100);
 
   state.balance += salePrice;
-  state.xp += 25;
   state.sold++;
 
   state.plants = state.plants.filter(x => x.id !== id);
@@ -737,12 +719,9 @@ function render() {
   document.getElementById("profileBalance").textContent =
     state.balance.toFixed(2) + " USDT";
 
-  document.getElementById("level").textContent = level();
-  document.getElementById("profileLevel").textContent = level();
-
-  document.getElementById("xp").textContent = state.xp + " XP";
-  document.getElementById("profileXP").textContent = state.xp + " XP";
-
+  document.getElementById("level").textContent = state.level;
+document.getElementById("profileLevel").textContent = state.level;
+  
   document.getElementById("sold").textContent = state.sold;
 
   const active = state.plants.filter(p => !p.dead);
