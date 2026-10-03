@@ -439,8 +439,10 @@ let state = JSON.parse(localStorage.getItem("greenWorldSave")) || {
   balance: 100,
   xp: 0,
   sold: 0,
-  plants: [],
-  lastDate: new Date().toDateString()
+    plants: [],
+  lastDate: new Date().toDateString(),
+  rewardStreak: 0,
+  rewardLastClaimDate: null
 };
 
 function save() {
@@ -548,7 +550,123 @@ function sellPlant(id) {
   render();
   alert("¡Árbol vendido por " + s.value.toFixed(2) + " USDT ficticios!");
 }
+const rewardAmounts = [0.25, 0.30, 0.30, 0.35, 0.40, 0.45, 0.45];
 
+function getTodayKey() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function getRewardStatus() {
+  const today = getTodayKey();
+  const last = state.rewardLastClaimDate;
+
+  if (last === today) {
+    return {
+      claimed: true,
+      day: state.rewardStreak
+    };
+  }
+
+  if (last) {
+    const previous = new Date(last + "T00:00:00");
+    const current = new Date(today + "T00:00:00");
+    const difference = Math.round(
+      (current - previous) / DAY
+    );
+
+    if (difference === 1 && state.rewardStreak < 7) {
+      return {
+        claimed: false,
+        day: state.rewardStreak + 1
+      };
+    }
+  }
+
+  return {
+    claimed: false,
+    day: 1
+  };
+}
+
+function claimReward() {
+  const status = getRewardStatus();
+
+  if (status.claimed) {
+    alert("¡Ya reclamaste tu recompensa de hoy! Vuelve mañana.");
+    return;
+  }
+
+  const amount = rewardAmounts[status.day - 1];
+
+  state.balance += amount;
+  state.rewardStreak = status.day;
+  state.rewardLastClaimDate = getTodayKey();
+
+  save();
+  render();
+
+  alert(
+    "¡Recompensa del día " + status.day +
+    " reclamada! Has recibido " +
+    amount.toFixed(2) + " USD ficticios."
+  );
+}
+
+function renderRewards() {
+  const status = getRewardStatus();
+
+  const list = document.getElementById("rewardsList");
+  const button = document.getElementById("rewardButton");
+
+  if (!list || !button) return;
+
+  list.innerHTML = rewardAmounts.map((amount, index) => {
+    const day = index + 1;
+    const completed = status.claimed
+      ? day <= status.day
+      : day < status.day;
+
+    const current = !status.claimed && day === status.day;
+
+    return `
+      <div class="shop-item" style="
+        border: ${current ? "2px solid #35d07f" : "1px solid #285b49"};
+        opacity: ${completed ? "0.65" : "1"};
+        margin-bottom: 10px;
+      ">
+        <div class="shop-emoji">
+          ${completed ? "✅" : current ? "🎁" : "🔒"}
+        </div>
+        <div class="shop-description">
+          <strong>Día ${day}</strong>
+          <small>${completed ? "Reclamado" : current ? "Disponible hoy" : "Próximamente"}</small>
+        </div>
+        <strong>${amount.toFixed(2)} USD</strong>
+      </div>
+    `;
+  }).join("");
+
+  if (status.claimed) {
+    button.innerHTML = `
+      <button class="secondary" disabled>
+        ✅ Recompensa de hoy reclamada
+      </button>
+      <p>Vuelve mañana para continuar tu racha.</p>
+    `;
+  } else {
+    button.innerHTML = `
+      <button class="primary" onclick="claimReward()">
+        🎁 Reclamar ${rewardAmounts[status.day - 1].toFixed(2)} USD
+      </button>
+      <p>Estás en el día ${status.day} de 7.</p>
+    `;
+  }
+}
 function render() {
   updateDay();
 
@@ -607,6 +725,7 @@ function render() {
         </div>
       </div>`;
     }).join("");
+      renderRewards();
   }
 
   document.getElementById("shopList").innerHTML = species.map(s => {
