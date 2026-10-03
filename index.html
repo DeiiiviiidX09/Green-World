@@ -492,13 +492,18 @@ function growth(p) {
 function buySeed(id) {
   const s = species.find(x => x.id === id);
 
+  if (!s) {
+    alert("Esta semilla no está disponible.");
+    return;
+  }
+
   if (state.plants.filter(p => !p.dead).length >= 3) {
     alert("¡Tu jardín está lleno! Solo puedes tener 3 plantas.");
     return;
   }
 
-  if (level() < (id === "golden" ? 3 : id === "lemon" ? 2 : 1)) {
-    alert("Necesitas subir de nivel para desbloquear esta semilla.");
+  if (level() < 1) {
+    alert("Necesitas subir de nivel para comprar esta semilla.");
     return;
   }
 
@@ -515,12 +520,16 @@ function buySeed(id) {
     plantedAt: Date.now(),
     health: 100,
     watered: false,
-    dead: false
+    dead: false,
+    careDays: 0,
+    absences: 0,
+    mature: false
   });
 
   save();
   render();
-  alert("¡Semilla plantada con éxito!");
+
+  alert("¡Manzano plantado con éxito! Tienes 15 días de riego por delante.");
 }
 
 function waterPlant(id) {
