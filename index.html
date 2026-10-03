@@ -528,10 +528,13 @@ function waterPlant(id) {
 
 function sellPlant(id) {
   const p = state.plants.find(x => x.id === id);
+
+  if (!p) return;
+
   const s = species.find(x => x.id === p.species);
 
-  if (growth(p) < 100) {
-    alert("Tu árbol todavía está creciendo.");
+  if ((p.careDays || 0) < 15) {
+    alert("Tu manzano necesita 15 riegos para madurar. ¡Sigue cuidándolo!");
     return;
   }
 
@@ -540,7 +543,15 @@ function sellPlant(id) {
     return;
   }
 
-  state.balance += s.value;
+  // Calcular las ausencias registradas
+  const absences = p.absences || 0;
+
+  // Cada ausencia reduce el precio un 5%, hasta un mínimo del 75%
+  const percentage = Math.max(75, 100 - absences * 5);
+
+  const salePrice = s.value * (percentage / 100);
+
+  state.balance += salePrice;
   state.xp += 25;
   state.sold++;
 
@@ -548,7 +559,14 @@ function sellPlant(id) {
 
   save();
   render();
-  alert("¡Árbol vendido por " + s.value.toFixed(2) + " USDT ficticios!");
+
+  alert(
+    "¡Árbol vendido por " +
+    salePrice.toFixed(2) +
+    " USDT ficticios! Cuidado: " +
+    percentage +
+    "% del precio base."
+  );
 }
 const rewardAmounts = [0.25, 0.30, 0.30, 0.35, 0.40, 0.45, 0.45];
 
