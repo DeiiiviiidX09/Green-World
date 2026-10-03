@@ -457,7 +457,6 @@ function updateDay() {
     state.plants.forEach(p => {
       if (p.dead) return;
 
-      // Contar los días sin riego
       const missedDays = Math.max(
         0,
         daysPassed - (p.watered ? 1 : 0)
@@ -465,15 +464,8 @@ function updateDay() {
 
       if (missedDays > 0) {
         p.absences = (p.absences || 0) + missedDays;
-
-        // Reducir la salud por cada día de ausencia
-        p.health = Math.max(
-          0,
-          (p.health || 100) - 25 * missedDays
-        );
       }
 
-      // Preparar la planta para el nuevo día
       p.watered = false;
     });
 
