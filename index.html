@@ -483,9 +483,10 @@ function updateDay() {
 }
 
 function growth(p) {
+  const careDays = p.careDays || 0;
+
   return Math.min(100, Math.floor(
-    (Date.now() - p.plantedAt) /
-    (species.find(s => s.id === p.species).days * DAY) * 100
+    (careDays / 15) * 100
   ));
 }
 
