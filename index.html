@@ -409,28 +409,10 @@ const species = [
     id: "apple",
     name: "Manzano",
     emoji: "🌳",
-    seed: 10,
-    value: 17.5,
-    days: 3,
-    description: "Un árbol frutal para comenzar tu jardín."
-  },
-  {
-    id: "lemon",
-    name: "Limonero",
-    emoji: "🍋",
-    seed: 20,
-    value: 35,
-    days: 5,
-    description: "Un árbol cítrico que requiere más paciencia."
-  },
-  {
-    id: "golden",
-    name: "Árbol dorado",
-    emoji: "🌟",
-    seed: 40,
-    value: 70,
-    days: 7,
-    description: "Una especie especial para jardineros avanzados."
+    seed: 25,
+    value: 50,
+    days: 15,
+    description: "Un manzano que necesita 15 riegos para madurar."
   }
 ];
 
@@ -440,10 +422,16 @@ let state = JSON.parse(localStorage.getItem("greenWorldSave")) || {
   balance: 100,
   xp: 0,
   sold: 0,
-    plants: [],
+  plants: [],
   lastDate: new Date().toDateString(),
   rewardStreak: 0,
-  rewardLastClaimDate: null
+  rewardLastClaimDate: null,
+  level: 1,
+  referrals: {
+    direct: 0,
+    second: 0,
+    third: 0
+  }
 };
 
 function save() {
