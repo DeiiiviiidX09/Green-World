@@ -502,13 +502,24 @@ function buySeed(id) {
 function waterPlant(id) {
   const p = state.plants.find(x => x.id === id);
 
+  if (!p) return;
+
   if (p.watered) {
     alert("Ya regaste esta planta hoy. ¡Vuelve mañana!");
     return;
   }
 
   p.watered = true;
-  p.health = Math.min(100, p.health + 20);
+  p.health = Math.min(100, (p.health || 0) + 20);
+
+  // Registrar un día de cuidado
+  p.careDays = (p.careDays || 0) + 1;
+
+  // La planta madura después de 15 riegos
+  if (p.careDays >= 15) {
+    p.mature = true;
+  }
+
   state.xp += 10;
 
   save();
