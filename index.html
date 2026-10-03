@@ -745,38 +745,70 @@ function render() {
   if (active.length === 0) {
     list.innerHTML = '<div class="empty">🌱<br><br>Tu jardín está vacío.<br>Visita la tienda para comprar tu primera semilla.</div>';
   } else {
-    list.innerHTML = active.map(p => {
-      const s = species.find(x => x.id === p.species);
-      const g = growth(p);
-      const emoji = g < 35 ? "🌱" : g < 70 ? "🌿" : s.emoji;
+   list.innerHTML = active.map(p => {
+  const s = species.find(x => x.id === p.species);
+  const g = growth(p);
+  const careDays = p.careDays || 0;
+  const absences = p.absences || 0;
+  const health = p.health ?? 100;
 
-      return `
-      <div class="plant">
-        <div class="plant-top">
-          <div class="plant-name">${s.name}</div>
-          <div class="status">${p.health > 0 ? "Saludable" : "Marchita"}</div>
-        </div>
-        <div class="tree">${emoji}</div>
-        <div class="plant-info">
-          <span>Crecimiento</span>
-          <span>${g}%</span>
-        </div>
-        <div class="progress">
-          <div class="progress-fill" style="width:${g}%"></div>
-        </div>
-        <div class="health">❤️ Salud: ${p.health}%</div>
-        <div class="health">💧 Riego: ${p.watered ? "Completado hoy" : "Pendiente"}</div>
-        <div class="actions">
-          <button class="primary" onclick="waterPlant(${p.id})"
-            ${p.watered || p.health <= 0 ? "disabled" : ""}>
-            💧 Regar
-          </button>
-          <button class="secondary" onclick="sellPlant(${p.id})">
-            🛒 Vender
-          </button>
-        </div>
-      </div>`;
-    }).join("");
+  let emoji = "🌱";
+  let stage = "Semilla";
+
+  if (careDays >= 8 && careDays < 15) {
+    emoji = "🌿";
+    stage = "Plantita";
+  }
+
+  if (careDays >= 15) {
+    emoji = absences === 0 ? "🌳" : absences <= 2 ? "🌲" : "🥀";
+    stage = "Árbol maduro";
+  }
+
+  const remaining = Math.max(0, 15 - careDays);
+
+  return `
+  <div class="plant">
+    <div class="plant-top">
+      <div class="plant-name">${s.name}</div>
+      <div class="status">${health > 0 ? "Saludable" : "Marchita"}</div>
+    </div>
+
+    <div class="tree">${emoji}</div>
+
+    <div class="plant-info">
+      <span>Estado</span>
+      <span>${stage}</span>
+    </div>
+
+    <div class="plant-info">
+      <span>Crecimiento</span>
+      <span>${g}%</span>
+    </div>
+
+    <div class="progress">
+      <div class="progress-fill" style="width:${g}%"></div>
+    </div>
+
+    <div class="health">🌱 Riegos completados: ${careDays} / 15</div>
+    <div class="health">⏳ Riegos restantes: ${remaining}</div>
+    <div class="health">📅 Días sin regar: ${absences}</div>
+    <div class="health">❤️ Salud: ${health}%</div>
+    <div class="health">💧 Riego: ${p.watered ? "Completado hoy" : "Pendiente"}</div>
+
+    <div class="actions">
+      <button class="primary" onclick="waterPlant(${p.id})"
+        ${p.watered || health <= 0 || careDays >= 15 ? "disabled" : ""}>
+        💧 Regar
+      </button>
+
+      <button class="secondary" onclick="sellPlant(${p.id})"
+        ${careDays < 15 || health <= 0 ? "disabled" : ""}>
+        🛒 Vender
+      </button>
+    </div>
+  </div>`;
+}).join("");
   }
 
   document.getElementById("shopList").innerHTML = species.map(s => {
