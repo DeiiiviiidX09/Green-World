@@ -446,10 +446,34 @@ function updateDay() {
   const today = new Date().toDateString();
 
   if (state.lastDate !== today) {
+    const previousDate = new Date(state.lastDate);
+    const currentDate = new Date(today);
+
+    const daysPassed = Math.max(
+      1,
+      Math.round((currentDate - previousDate) / DAY)
+    );
+
     state.plants.forEach(p => {
-      if (!p.dead && !p.watered) {
-        p.health = Math.max(0, p.health - 25);
+      if (p.dead) return;
+
+      // Contar los días sin riego
+      const missedDays = Math.max(
+        0,
+        daysPassed - (p.watered ? 1 : 0)
+      );
+
+      if (missedDays > 0) {
+        p.absences = (p.absences || 0) + missedDays;
+
+        // Reducir la salud por cada día de ausencia
+        p.health = Math.max(
+          0,
+          (p.health || 100) - 25 * missedDays
+        );
       }
+
+      // Preparar la planta para el nuevo día
       p.watered = false;
     });
 
